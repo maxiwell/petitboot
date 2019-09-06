@@ -66,6 +66,11 @@ AC_CHECK_LIB([udev], [udev_new],
 	[AC_MSG_FAILURE([The libudev development library is required by petitboot.  Try installing the package libudev-dev or libudev-devel.])]
 )
 
+AC_CHECK_LIB([elf], [elf_begin],
+	[ELF_LIBS=-lelf],
+	[AC_MSG_FAILURE([The libelf development library is required by petitboot.  Try installing the package libelf-dev or elfutils-libelf-devel.])]
+)
+
 PKG_CHECK_EXISTS(libudev >= 218, [old_udev=no], [old_udev=yes])
 if test "$old_udev" = "yes" ; then
       AC_DEFINE(UDEV_LOGGING, 1, [Support old udev logging interface])
@@ -109,6 +114,11 @@ AM_CONDITIONAL([HAVE_LIBFDT], [test x"$have_libfdt" = xyes])
 
 AC_CHECK_HEADERS([stdarg.h])
 AC_CHECK_HEADERS([varargs.h])
+
+AC_CHECK_HEADERS([elfutils/libdw.h],
+	[],
+	[AC_MSG_FAILURE([elfutils/libdw.h not found. Try installing the package libdw-dev or elfutils-devel.])]
+)
 
 dnl Checking for va_copy availability
 AC_MSG_CHECKING([for va_copy])
@@ -476,6 +486,7 @@ AS_IF(
 )
  
 AC_SUBST([UDEV_LIBS])
+AC_SUBST([ELF_LIBS])
 AC_SUBST([DEVMAPPER_LIBS])
 AC_SUBST([CRYPT_LIBS])
 AC_SUBST([FDT_LIBS])
